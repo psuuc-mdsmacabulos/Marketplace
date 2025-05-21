@@ -42,16 +42,30 @@ class ProductController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $product = Product::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price,
-            'image_url' => $request->image_url,
-            'stock_quantity' => $request->stock_quantity,
-            'user_id' => auth()->id(),
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'description' => 'required|string',
+                'price' => 'required|numeric',
+                'image_url' => 'required|url|max:2048', // Allow longer URLs, adjust max as needed
+                'stock_quantity' => 'required|integer|min:0',
+            ]);
 
-        return response()->json($product, 201);
+            $product = Product::create([
+                'name' => $validatedData['name'],
+                'description' => $validatedData['description'],
+                'price' => $validatedData['price'],
+                'image_url' => $validatedData['image_url'],
+                'stock_quantity' => $validatedData['stock_quantity'],
+                'user_id' => auth()->id(),
+            ]);
+
+            return response()->json($product, 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['error' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to create product: ' . $e->getMessage()], 500);
+        }
     }
 
     /**

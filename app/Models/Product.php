@@ -2,18 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    use HasFactory;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'description',
@@ -23,9 +15,7 @@ class Product extends Model
         'user_id',
     ];
 
-    /**
-     * Get the user that owns the product.
-     */
+    // Define relationships if needed
     public function user()
     {
         return $this->belongsTo(User::class);
