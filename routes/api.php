@@ -15,8 +15,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Logout endpoint
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-    // Create product (admin only)
-    Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+    // Create product (admin only) - Changed to avoid conflict with viewDetails
+    Route::post('/products/store', [ProductController::class, 'store'])->name('products.store');
 });
 
 // Public routes
@@ -26,3 +26,4 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('l
 // Product routes (public)
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+Route::post('/products', [ProductController::class, 'viewDetails'])->name('products.viewDetails');

@@ -53,4 +53,27 @@ class ProductController extends Controller
 
         return response()->json($product, 201);
     }
+
+    /**
+     * Log or process a request to view product details by ID.
+     */
+    public function viewDetails(Request $request): JsonResponse
+    {
+        $id = $request->input('id');
+
+        if (!$id) {
+            return response()->json(['error' => 'Product ID is required'], 400);
+        }
+
+        $product = Product::with('user')->find($id);
+
+        if (!$product) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+
+        // Optionally log the request
+        \Log::info("Product details requested for ID: {$id}");
+
+        return response()->json(['message' => 'Product details retrieved', 'product' => $product], 200);
+    }
 }

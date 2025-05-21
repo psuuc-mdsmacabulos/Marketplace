@@ -8,19 +8,23 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         api: __DIR__.'/../routes/api.php',
+        apiPrefix: 'api',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->api(prepend: [
-            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            \Illuminate\Http\Middleware\HandleCors::class, // Add CORS middleware
+        ]);
+
+        // Exclude API routes from CSRF protection
+        $middleware->validateCsrfTokens(except: [
+            'api/*',
         ]);
 
         $middleware->alias([
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
         ]);
-
-        //
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
